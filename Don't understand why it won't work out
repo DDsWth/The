@@ -1,0 +1,30 @@
+ikb_movies_dict = {}
+
+def get_a_list_of_movies(genre):
+    movie_buttons = []
+    conn = sql.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT movie FROM movieslist WHERE genre = ?', (genre,))
+    results = cursor.fetchall()
+    for row in results:
+        movie_buttons.append([InlineKeyboardButton(text=row[0], callback_data=f"movie_select_{genre.lower()}_{row[0].lower().replace(' ', '_')}")])
+    conn.close()
+    return InlineKeyboardMarkup(inline_keyboard=movie_buttons + [[InlineKeyboardButton('Back', callback_data='Back')]])
+
+for genre in genres_list:
+    ikb_movies_dict[genre] = get_a_list_of_movies(genre)
+
+movies_romance = []
+movies_action = []
+movies_horror = []
+movies_thriller = []
+movies_drama = []
+movies_fantasy = []
+movies_mystery = []
+movies_comedy = []
+movies_scifi = []
+
+for movie in ikb_movies_dict:
+    movies = ikb_movies_dict.get(movie)
+    variable_name = f'movies_{movie.lower()}'
+    variable_name.append(movie)
